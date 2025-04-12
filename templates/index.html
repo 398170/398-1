@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html>
-<head><title>動画一覧</title></head>
+<head>
+    <title>動画一覧</title>
+</head>
 <body>
-<h1>ようこそ！</h1>
-{% if session.get("username") %}
-  <p>こんにちは、{{ session["username"] }}さん！ <a href="{{ url_for('logout') }}">ログアウト</a></p>
-{% else %}
-  <a href="{{ url_for('login') }}">ログイン</a> | <a href="{{ url_for('register') }}">新規登録</a>
-{% endif %}
+    <h1>ようこそ、動画共有サイトへ！</h1>
 
-<h2>動画一覧</h2>
-<ul>
-  {% for video in videos %}
-    <li>{{ video["title"] }} - <a href="{{ video["url"] }}">見る</a></li>
-  {% endfor %}
-</ul>
+    {% if session.username %}
+        <p>ログイン中: {{ session.username }} | <a href="{{ url_for('logout') }}">ログアウト</a></p>
+    {% else %}
+        <p><a href="{{ url_for('register') }}">登録</a> | <a href="{{ url_for('user_login') }}">ログイン</a> | <a href="{{ url_for('admin_login') }}">管理者ログイン</a></p>
+    {% endif %}
+
+    <p><a href="{{ url_for('upload') }}">動画を投稿する</a></p>
+
+    {% for video in videos %}
+        <div>
+            <h2><a href="{{ url_for('watch', video_id=video.id) }}">{{ video.title }}</a></h2>
+            <p>いいね: {{ video.likes }}</p>
+            {% if session.admin %}
+                <a href="{{ url_for('delete', video_id=video.id) }}">[削除]</a>
+            {% endif %}
+        </div>
+    {% endfor %}
 </body>
 </html>
